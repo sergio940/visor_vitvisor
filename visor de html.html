@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Vitvisor HTML – Futuristic</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ====== BASE ====== */
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(120deg, #050b1f, #020617);
+    color: #e0e7ff;
+    overflow: hidden;
+}
+
+/* ====== SIDEBAR ====== */
+#sidebar {
+    width: 380px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(14px);
+    background: rgba(10, 20, 60, 0.55);
+    border-right: 1px solid rgba(0, 153, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 153, 255, 0.2);
+}
+
+#sidebar h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #38bdf8;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+/* ====== EDITOR ====== */
+.editor-container {
+    flex: 1;
+    display: flex;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.9);
+    box-shadow: inset 0 0 20px rgba(56,189,248,0.2);
+}
+
+/* Line numbers */
+#lineNumbers {
+    padding: 12px 10px;
+    text-align: right;
+    color: #64748b;
+    background: rgba(2, 6, 23, 0.9);
+    user-select: none;
+    font-size: 13px;
+}
+
+/* Textarea */
+#htmlInput {
+    flex: 1;
+    background: transparent;
+    color: #e5e7eb;
+    border: none;
+    padding: 12px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    white-space: pre;
+    caret-color: #38bdf8;
+}
+
+/* ====== BUTTON ====== */
+button {
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    color: #0f172a;
+    background: linear-gradient(135deg, #38bdf8, #22d3ee);
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(56,189,248,0.7);
+    transition: 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 0 25px rgba(56,189,248,1);
+}
+
+/* ====== VIEWER ====== */
+#viewer {
+    flex: 1;
+    padding: 25px;
+    background: radial-gradient(circle at top, #020617, #000);
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(56,189,248,0.3);
+    background: white;
+    box-shadow: 0 0 30px rgba(56,189,248,0.25);
+}
+</style>
+</head>
+
+<body>
+
+<div id="sidebar">
+    <h1>VITVISOR ∞ HTML</h1>
+
+    <div class="editor-container">
+        <div id="lineNumbers">1</div>
+        <textarea id="htmlInput" spellcheck="false"
+        placeholder="&lt;!-- Escribe tu HTML aquí --&gt;"></textarea>
+    </div>
+
+    <button onclick="downloadHTML()">⬇ Descargar HTML</button>
+</div>
+
+<div id="viewer">
+    <iframe id="iframeViewer"></iframe>
+</div>
+
+<script>
+const textarea = document.getElementById('htmlInput');
+const lineNumbers = document.getElementById('lineNumbers');
+const iframe = document.getElementById('iframeViewer');
+
+/* Line numbers */
+function updateLines() {
+    const lines = textarea.value.split('\n').length;
+    lineNumbers.innerHTML = Array.from(
+        { length: lines },
+        (_, i) => i + 1
+    ).join('<br>');
+}
+
+/* Live render */
+function renderHTML() {
+    iframe.srcdoc = textarea.value;
+}
+
+textarea.addEventListener('input', () => {
+    updateLines();
+    renderHTML();
+});
+
+textarea.addEventListener('scroll', () => {
+    lineNumbers.scrollTop = textarea.scrollTop;
+});
+
+/* Download */
+function downloadHTML() {
+    const blob = new Blob([textarea.value], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'codigo.html';
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* Init */
+updateLines();
+renderHTML();
+</script>
+
+</body>
+</html>
